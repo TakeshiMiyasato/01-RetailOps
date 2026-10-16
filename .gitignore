@@ -1,0 +1,16 @@
+# .NET
+bin/
+obj/
+TestResults/
+*.user
+.vs/
+
+# Node / Next.js (frontend/.gitignore covers the rest)
+node_modules/
+.next/
+test-results/
+playwright-report/
+
+# Local env
+.env
+.env.local
