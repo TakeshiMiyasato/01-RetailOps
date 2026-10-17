@@ -2,7 +2,6 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { Store } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Button, ErrorNote, Field, Input } from "@/components/ui";
 
@@ -19,7 +18,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   async function signIn(emailValue: string, passwordValue: string) {
@@ -32,7 +30,8 @@ export default function LoginPage() {
     });
     if (response.ok) {
       queryClient.clear(); // never show the previous user's cached data
-      router.replace("/dashboard");
+      // Full navigation so this form (password included) isn't kept mounted in a hidden <Activity>.
+      window.location.replace("/dashboard");
       return;
     }
     setLoading(false);

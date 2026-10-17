@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { ArrowLeftRight, Boxes, LayoutDashboard, LogOut, Menu, Package, Receipt, ShoppingCart, Store } from "lucide-react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { roleLabel } from "@/lib/format";
 import { can, useSession } from "@/lib/session";
@@ -22,13 +22,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { data: user } = useSession();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
     queryClient.clear();
-    router.replace("/login");
+    // Full navigation, not router.replace: with cacheComponents, visited routes stay mounted
+    // (hidden in <Activity>) with their local state — a stale login form, the previous user's cart.
+    window.location.replace("/login");
   }
 
   const sidebar = (

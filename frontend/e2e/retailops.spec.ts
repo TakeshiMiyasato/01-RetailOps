@@ -20,6 +20,18 @@ test("wrong credentials show an error and keep the user on login", async ({ page
   await expect(page).toHaveURL(/\/login$/);
 });
 
+test("logging out returns a clean, usable login form", async ({ page }) => {
+  await loginAs(page, "Administrador");
+  await page.getByRole("button", { name: "Cerrar sesión" }).click();
+  await expect(page).toHaveURL(/\/login$/);
+
+  // Regression: the login page used to come back from <Activity> still "loading", with the old credentials.
+  await expect(page.getByRole("button", { name: "Ingresar" })).toBeEnabled();
+  await expect(page.getByRole("textbox", { name: "Correo" })).toHaveValue("");
+  await loginAs(page, "Cajero");
+  await expect(page.getByText("Lucía Condori")).toBeVisible();
+});
+
 test("cashier sells a product from the POS and stock goes down", async ({ page }) => {
   await loginAs(page, "Cajero");
   await expect(page.getByRole("link", { name: "Transferencias" })).toHaveCount(0);
